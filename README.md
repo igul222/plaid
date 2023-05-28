@@ -41,11 +41,12 @@ python train.py --weights_path=/path/to/plaid1b_weights --dim=2048 --n_blocks=24
    ```
    python train.py
    ```
-   By default, this trains a small model (16 layers, dim 384, sequence length 256, 92K steps at batch size 256) which should take under a day on an 80GB A100. You can change these hyperparameters by passing different options to `train.py`.
+
+By default, this trains a small model (16 layers, dim 384, sequence length 256, 92K steps at batch size 256) which should take under a day on an 80GB A100. You can change these hyperparameters by passing different options to `train.py`.
    
-   If you don't have enough memory to train the model with default settings, you can enable gradient accumulation. The following commands should produce equivalent results:
-   ```
-   python train.py # defaults to grad_accum_steps=1, batch_size=256
-   python train.py --grad_accum_steps=2 --batch_size=128
-   python train.py --grad_accum_steps=4 --batch_size=64
+If you don't have enough memory to train the model with default settings, you can enable gradient accumulation. The following commands should produce equivalent results:
+```
+python train.py # defaults to grad_accum_steps=1, batch_size=256
+python train.py --grad_accum_steps=2 --batch_size=128
+python train.py --grad_accum_steps=4 --batch_size=64
 ```
