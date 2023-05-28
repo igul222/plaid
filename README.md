@@ -2,6 +2,8 @@
 
 This repository contains code for training and evaluating the models in the paper *Likelihood-Based Diffusion Language Models*.
 
+![Figure 1 from the Likelihood-Based Diffusion Language Models paper.](figure1.png)
+
 ## Generating samples from Plaid 1B
 
 First download the weights from here: [Plaid 1B Weights Download Page](https://github.com/igul222/plaid/releases/tag/v1.0.0)
