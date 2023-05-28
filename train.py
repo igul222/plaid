@@ -33,7 +33,7 @@ def main(**args):
     args.setdefault('bias_warmup_steps', 5000)
     args.setdefault('lr_decay', True)
     args.setdefault('print_freq', 1000)
-    args.setdefault('save_weights', False)
+    args.setdefault('save_weights', True)
     args.setdefault('steps', 92000)
     args.setdefault('weights_path', None)
     args.setdefault('reconst_weight', 1.0)
