@@ -11,11 +11,12 @@ This codebase requires PyTorch 2.0 and a few fused CUDA kernels that need to be 
 pip install -r requirements.txt
 ```
 
-Install fused MLP and rotary embedding kernels from FlashAttention:
+Install FlashAttention with fused MLP and rotary embedding kernels:
 ```
 git clone https://github.com/HazyResearch/flash-attention.git
-pip install -e flash-attention/csrc/rotary
-pip install -e flash-attention/csrc/fused_dense_lib
+pip install flash-attention
+pip install flash-attention/csrc/rotary
+pip install flash-attention/csrc/fused_dense_lib
 ```
 
 Install NVIDIA Apex with fused kernels:
