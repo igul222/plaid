@@ -161,58 +161,6 @@ def openwebtext2(batch_size, val_batch_size, seq_len):
 
     return (train_iterator, val_iterator, test_iterator), (word2idx, idx2word)
 
-def _rocstories_iterator(split, rank, world_size):
-    data_dir = os.environ['DATA_DIR']
-    with open(os.path.join(data_dir,f'rocstories/{split}.json'), 'rb') as f:
-        # lines are formatted as: ["Fred was playing basketball."]\n
-        all_stories = [line[2:-3].decode('utf-8', 'ignore') for line in f]
-    rng = np.random.RandomState(seed=0)
-    while True:
-        rng.shuffle(all_stories)
-        for x in all_stories[rank::world_size]:
-            yield x
-
-class _ROCStoriesOWTIterableDataset(torch.utils.data.IterableDataset):
-    def __init__(self, train, batch_size, seq_len, tokenizer):
-        self.args = (train, batch_size, seq_len, tokenizer)
-        self.rank = lib.ddp.rank()
-        self.world_size = lib.ddp.world_size()
-    def __iter__(self):
-
-
-        train, batch_size, seq_len, tokenizer = self.args
-        if train:
-            iterator = _rocstories_iterator('train', self.rank, self.world_size)
-        else:
-            iterator = _rocstories_iterator('val', 0, 1)
-        iterator = _tokenize(iterator, tokenizer)
-        iterator = _to_chunks(iterator, seq_len)
-        iterator = _batch(iterator, batch_size)
-        return iterator
-
-def rocstories_owt2(batch_size, val_batch_size, seq_len):
-    """ROCstories with OWT2 tokenizer / batching format."""
-    if seq_len is None:
-        seq_len = 1024
-
-    tokenizer = openwebtext2_tokenizer()
-    word2idx = {k.encode('utf-8'):v for k,v in tokenizer.get_vocab().items()}
-    idx2word = {v:k for k,v in word2idx.items()}
-
-    train_iterator = iter(torch.utils.data.DataLoader(
-        _ROCStoriesOWTIterableDataset(True, batch_size, seq_len, tokenizer),
-        batch_size=None, num_workers=1, prefetch_factor=1))
-
-    val_iterator = iter(torch.utils.data.DataLoader(
-        _ROCStoriesOWTIterableDataset(False, val_batch_size, seq_len, tokenizer),
-        batch_size=None, num_workers=1, prefetch_factor=1))
-
-    test_iterator = iter(torch.utils.data.DataLoader(
-        _ROCStoriesOWTIterableDataset(False, val_batch_size, seq_len, tokenizer),
-        batch_size=None, num_workers=1, prefetch_factor=1))
-
-    return (train_iterator, val_iterator, test_iterator), (word2idx, idx2word)
-
 def ptb_untokenized():
     with open(PTB_PATH, 'r') as f:
         dataset = f.read()[:-1] # drop trailing newline
@@ -393,9 +341,6 @@ UNTOKENIZED_REGISTRY = {
 }
 
 REGISTRY = {
-    'rocstories': rocstories,
-    'rocstories_gpt': rocstories_gpt,
-    'rocstories_owt2': rocstories_owt2,
     'openwebtext2': openwebtext2,
     'ptb': ptb,
     'wikitext2': wikitext2,

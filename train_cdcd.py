@@ -17,7 +17,6 @@ import torch
 import torch.distributed.optim
 import torch.nn.functional as F
 import tqdm
-import wandb
 from einops import rearrange
 from torch import nn, optim, autograd
 from torch.nn.parallel import DistributedDataParallel as DDP
@@ -38,7 +37,6 @@ def main(**args):
     args.setdefault('steps', 85714)
     args.setdefault('weights_path', None)
     args.setdefault('reconst_weight', 1.0)
-    args.setdefault('log_to_wandb', True)
     args.setdefault('dim', 384)
     args.setdefault('n_blocks', 16)
     args.setdefault('n_heads', 6)
@@ -51,17 +49,8 @@ def main(**args):
     args.setdefault('weight_decay', 4e-5)
     args.setdefault('selfcond', True)
     args.setdefault('embed_init_std', 0.25)
-    args.setdefault('clip_quantile', 0.95)
 
     lib.utils.print_args(args)
-
-    if args.log_to_wandb and (lib.ddp.rank() == 0):
-        wandb.init(
-            project="simplex-diffusion",
-            name=os.getcwd().split('/')[-1],
-            config=args,
-            settings=wandb.Settings(start_method="fork")            
-        )
 
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
@@ -489,13 +478,8 @@ def main(**args):
             param
             for module in modules.values()
             for param in module.parameters()
-        ],
-        log_to_wandb=args.log_to_wandb,
-        clip_quantile=args.clip_quantile,
+        ]
     )
-
-    if args.log_to_wandb and (lib.ddp.rank() == 0):
-        wandb.finish(quiet=True)
 
 if __name__ == '__main__':
     fire.Fire(lib.ddp.wrap_main(main))

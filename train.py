@@ -18,7 +18,6 @@ import torch
 import torch.distributed.optim
 import torch.nn.functional as F
 import tqdm
-import wandb
 from torch import nn, optim, autograd
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -37,7 +36,6 @@ def main(**args):
     args.setdefault('steps', 92000)
     args.setdefault('weights_path', None)
     args.setdefault('reconst_weight', 1.0)
-    args.setdefault('log_to_wandb', True)
     args.setdefault('dim', 384)
     args.setdefault('n_blocks', 16)
     args.setdefault('n_heads', 6)
@@ -61,14 +59,6 @@ def main(**args):
     args.setdefault('final_val_steps', 3000)
 
     lib.utils.print_args(args)
-
-    if args.log_to_wandb and (lib.ddp.rank() == 0):
-        wandb.init(
-            project="simplex-diffusion",
-            name=os.getcwd().split('/')[-1],
-            config=args,
-            settings=wandb.Settings(start_method="fork")            
-        )
 
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
@@ -475,11 +465,7 @@ def main(**args):
             for param in module.parameters()
         ],
         clip_quantile=args.clip_quantile,
-        log_to_wandb=args.log_to_wandb
     )
-
-    if args.log_to_wandb and (lib.ddp.rank() == 0):
-        wandb.finish(quiet=True)
 
     final_val_nll = compute_nll(val_iterator, args.final_val_steps)
     print('Final val NLL:', final_val_nll)

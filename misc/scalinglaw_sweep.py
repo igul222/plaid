@@ -149,7 +149,6 @@ def main(**args):
             hook_freq=lib.scalinglaw_utils.VAL_FREQ,
             val_steps=100,
             val_batch_size=batch_size,
-            log_to_wandb=False,
             seq_len=lib.scalinglaw_utils.SEQ_LEN,
             lr_warmup_steps=calculate_warmup_steps(steps),
         )

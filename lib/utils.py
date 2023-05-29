@@ -8,7 +8,6 @@ import time
 import torch
 import types
 import warnings
-import wandb
 from torch import nn, optim
 
 class AttributeDict(dict):
@@ -71,9 +70,7 @@ def train_loop(
     grad_accum_steps=1,
     ddp_models=[],
     clip_params=[],
-    clip_quantile=0.95,
-    log_to_wandb=False,
-    wandb_step_offset=0,
+    clip_quantile=0.95
     ):
 
     def lr_fn(step):
@@ -154,8 +151,6 @@ def train_loop(
                 means['grad_norm'],
                 torch.cuda.max_memory_allocated() / (1024**3)
             )
-            if log_to_wandb and (lib.ddp.rank() == 0):
-                wandb.log(means, step=(step + wandb_step_offset), commit=True)
             histories.clear()
 
         if hook is not None:

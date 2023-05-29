@@ -4,12 +4,32 @@ This repository contains code for training and evaluating the models in the pape
 
 ![Figure 1 from the Likelihood-Based Diffusion Language Models paper.](figure1.png)
 
+## Installing requirements
+
+This codebase requires PyTorch 2.0 and a few fused CUDA kernels that need to be installed manually. Most of the dependencies can be installed automatically:
+```
+pip install -r requirements.txt
+```
+
+Install fused MLP and rotary embedding kernels from FlashAttention:
+```
+git clone https://github.com/HazyResearch/flash-attention.git
+pip install -e flash-attention/csrc/rotary
+pip install -e flash-attention/csrc/fused_dense_lib
+```
+
+Install NVIDIA Apex with fused kernels:
+```
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+```
+
 ## Generating samples from Plaid 1B
 
 First download the weights from here: [Plaid 1B Weights Download Page](https://github.com/igul222/plaid/releases/tag/v1.0.0)
 
 Extract them:
-
 ```
 cat plaid1b_weights.tar.gz.* | tar xvzf -
 ```

@@ -14,7 +14,6 @@ import time
 import torch
 import torch.nn.functional as F
 import tqdm
-import wandb
 from torch import nn, optim, autograd
 from torch.nn.parallel import DistributedDataParallel as DDP
 
@@ -34,7 +33,6 @@ def main(**args):
     args.setdefault('save_weights', False)
     args.setdefault('steps', 104000)
     args.setdefault('weights_path', None)
-    args.setdefault('log_to_wandb', True)
     args.setdefault('dim', 768)
     args.setdefault('n_blocks', 12)
     args.setdefault('n_heads', 12)
@@ -46,13 +44,6 @@ def main(**args):
     args.setdefault('tie_embeddings', False)
 
     lib.utils.print_args(args)
-
-    if args.log_to_wandb and (lib.ddp.rank() == 0):
-        wandb.init(
-            project="simplex-diffusion",
-            name=os.getcwd().split('/')[-1],
-            config=args
-        )
 
     dataset = lib.datasets.REGISTRY[args.dataset](
         args.batch_size, args.val_batch_size, args.seq_len
@@ -141,8 +132,7 @@ def main(**args):
         ddp_models=[ddp_model],
         clip_params=[
             param for param in model.parameters()
-        ],
-        log_to_wandb=args.log_to_wandb
+        ]
     )
 
     final_val_nll = compute_nll(val_iterator, 3000)
