@@ -1,6 +1,5 @@
 einops==0.6.1
 fire==0.5.0
-flash_attn==1.0.6
 jsonlines==3.1.0
 matplotlib==3.7.1
 mup==1.0.0
