@@ -14,9 +14,9 @@ pip install -r requirements.txt
 Install FlashAttention with fused MLP and rotary embedding kernels:
 ```
 git clone https://github.com/HazyResearch/flash-attention.git
-pip install flash-attention
-pip install flash-attention/csrc/rotary
-pip install flash-attention/csrc/fused_dense_lib
+pip install ./flash-attention
+pip install ./flash-attention/csrc/rotary
+pip install ./flash-attention/csrc/fused_dense_lib
 ```
 
 Install NVIDIA Apex with fused kernels:
