@@ -56,7 +56,7 @@ python train.py --weights_path=/path/to/plaid1b_weights --dim=2048 --n_blocks=24
 2. Update the `OPENWEBTEXT2_DATA_DIR` constant in `lib/datasets.py` with the path to the extracted files.
 3. Run the OpenWebText2 preprocessing script:
    ```
-   python -m misc.owt2_preprocess --data_dir=/path/to/openwebtext2
+   python -m misc.owt2_preprocess
    ```
 4. Run the training script:
    ```
